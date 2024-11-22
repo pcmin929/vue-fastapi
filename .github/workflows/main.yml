@@ -23,18 +23,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub 로그인 사용자명
         password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub 로그인 비밀번호
         
-    # 4. Docker 이미지 빌드
-    - name: Build Docker image
-      run: |
-        pwd && ls
-        docker build -t oolralra/backend:${{ github.run_number }} ./backend
-        docker build -t oolralra/frontend:${{ github.run_number }} ./frontend
-    
-    # 5. Docker Hub에 이미지 푸시
-    - name: Push Docker image to Docker Hub
-      run: |
-        docker push oolralra/backend:${{ github.run_number }}
-        docker push oolralra/frontend:${{ github.run_number }}
+
 
     # 6. SSH 설정: GitHub Secrets에서 EC2 접근에 필요한 키와 주소 설정
     - name: Set up SSH keys
@@ -45,8 +34,8 @@ jobs:
     # 7. SSH를 통해 EC2 인스턴스에 접속하여 Docker Compose 실행
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i s@${{ secrets.DOCKER_USERNAME }}/frontend:.*@${{ secrets.DOCKER_USERNAME }}/frontend:{{ github.run_number }}@g docker-compose.yml"
-        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i s@${{ secrets.DOCKER_USERNAME }}/backend:.*@${{ secrets.DOCKER_USERNAME }}/backend:{{ github.run_number }}@g docker-compose.yml"
+        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i 's@${{ secrets.DOCKER_USERNAME }}/frontend:.*@${{ secrets.DOCKER_USERNAME }}/frontend:{{ github.run_number }}@g' docker-compose.yml"
+        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i 's@${{ secrets.DOCKER_USERNAME }}/backend:.*@${{ secrets.DOCKER_USERNAME }}/backend:{{ github.run_number }}@g' docker-compose.yml"
         ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo cp docker-compose.yml . && sudo docker compose up -d"
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # SSH 키
