@@ -1,0 +1,18 @@
+services:
+  frontend:
+    image: oolralra/frontend:1
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - cnetwork
+
+  backend:
+    image: oolralra/backend:1
+    networks:
+      - cnetwork
+
+networks:
+  cnetwork:
+    external: true
