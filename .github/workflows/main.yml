@@ -32,8 +32,8 @@ jobs:
     
     - name: Edit Docker-compose
       run: |
-        sed -i s@${{ secrets.DOCKER_USERNAME }}/frontend:.*@${{ secrets.DOCKER_USERNAME }}/frontend:{{ github.run_number }}
-        sed -i s@${{ secrets.DOCKER_USERNAME }}/backend:.*@${{ secrets.DOCKER_USERNAME }}/backend:{{ github.run_number }}
+        sed -i s@${{ secrets.DOCKER_USERNAME }}/frontend:.*@${{ secrets.DOCKER_USERNAME }}/frontend:{{ github.run_number }}@g docker-compose.yml
+        sed -i s@${{ secrets.DOCKER_USERNAME }}/backend:.*@${{ secrets.DOCKER_USERNAME }}/backend:{{ github.run_number }}@g docker-compose.yml
         
     # 5. Docker Hub에 이미지 푸시
     - name: Push Docker image to Docker Hub
