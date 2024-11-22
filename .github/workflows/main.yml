@@ -34,8 +34,9 @@ jobs:
     # 7. SSH를 통해 EC2 인스턴스에 접속하여 Docker Compose 실행
     - name: Deploy to EC2
       run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo cp docker-compose.yml ."
         ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i 's@${{ secrets.DOCKER_USERNAME }}/frontend:.*@${{ secrets.DOCKER_USERNAME }}/frontend:{{ github.run_number }}@g' docker-compose.yml"
         ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo sed -i 's@${{ secrets.DOCKER_USERNAME }}/backend:.*@${{ secrets.DOCKER_USERNAME }}/backend:{{ github.run_number }}@g' docker-compose.yml"
-        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo cp docker-compose.yml . && sudo docker compose up -d"
+        ssh -o StrictHostKeyChecking=no ubuntu@43.202.100.85 "sudo docker compose up -d"
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # SSH 키
